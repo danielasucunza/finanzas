@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mis gastos ✦</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Serif+Display:ital@0;1&display=swap');
+  :root {
+    --bg:#fff8fb;--bg2:#fef0f5;--bg3:#fde8f0;--card:#ffffff;
+    --text:#3d2030;--text2:#9c6878;--text3:#c9a0b0;
+    --border:rgba(220,150,175,0.18);--border2:rgba(220,150,175,0.32);
+    --rose:#e8829a;--rose-bg:#fff0f4;--rose-txt:#a03050;
+    --mauve:#b888c8;--mauve-bg:#f8f0fc;--mauve-txt:#7040a0;
+    --sage:#88b898;--sage-bg:#f0f8f2;--sage-txt:#3a7050;
+    --peach:#f0a878;--peach-bg:#fff4ee;--peach-txt:#8a4820;
+    --gold:#e0b850;--gold-bg:#fffaec;--gold-txt:#806010;
+    --ars:#e0b850;--ars-bg:#fffaec;--ars-txt:#7a5800;
+    --usd:#6ab88a;--usd-bg:#edf7f2;--usd-txt:#1e6640;
+    --r:10px;--r-lg:16px;--r-xl:20px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg3);color:var(--text);min-height:100vh}
+  .app-wrap{max-width:680px;margin:0 auto;padding:1.5rem 1rem 4rem}
+  .app-header{margin-bottom:1.5rem}
+  .app-header h1{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;letter-spacing:-.3px}
+  .app-header p{font-size:13px;color:var(--text2);margin-top:2px}
+  .tabs{display:flex;gap:2px;background:var(--bg2);border-radius:var(--r-lg);padding:4px;margin-bottom:1.5rem;border:0.5px solid var(--border)}
+  .tab{flex:1;padding:9px 4px;font-size:12px;cursor:pointer;border:none;background:transparent;color:var(--text2);border-radius:var(--r);transition:all .18s;font-weight:500;font-family:'DM Sans',sans-serif}
+  .tab.active{background:var(--card);color:var(--rose);box-shadow:0 1px 4px rgba(196,99,122,.12);font-weight:600}
+  .tab:hover:not(.active){color:var(--text)}
+  .section{display:none}.section.active{display:block}
+  .card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--r-xl);padding:1.1rem 1.3rem;margin-bottom:12px}
+  .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.1rem}
+  .metric{background:var(--bg2);border-radius:var(--r-lg);padding:.9rem 1rem;border:0.5px solid var(--border)}
+  .metric-label{font-size:11px;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px;font-weight:500}
+  .metric-value{font-size:20px;font-weight:600;color:var(--text);font-family:'DM Serif Display',serif;font-style:italic}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+  @media(max-width:480px){.form-row{grid-template-columns:1fr}}
+  label{font-size:12px;color:var(--text2);display:block;margin-bottom:5px;font-weight:500;letter-spacing:.2px}
+  input,select{width:100%;padding:10px 12px;font-size:14px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--bg2);color:var(--text);outline:none;transition:all .15s;font-family:'DM Sans',sans-serif}
+  input:focus,select:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(196,99,122,.1);background:var(--card)}
+  input::placeholder{color:var(--text3)}
+  .btn{padding:11px 20px;font-size:14px;font-weight:600;cursor:pointer;border-radius:var(--r-lg);border:none;background:linear-gradient(135deg,var(--rose) 0%,var(--mauve) 100%);color:#fff;width:100%;margin-top:6px;transition:opacity .15s;font-family:'DM Sans',sans-serif}
+  .btn:hover{opacity:.85}
+  .btn-outline{background:var(--rose-bg);color:var(--rose);border:1px solid var(--rose-bg)}
+  .btn-outline:hover{opacity:.8}
+  .btn-sm{padding:4px 10px;font-size:11px;cursor:pointer;border-radius:6px;border:0.5px solid var(--border);background:transparent;color:var(--text3);transition:all .15s;font-family:'DM Sans',sans-serif}
+  .btn-sm:hover{background:var(--bg2);color:var(--text)}
+  .btn-danger{color:#c4637a;border-color:var(--rose-bg);background:var(--rose-bg)}
+  .expense-item{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg2);border-radius:var(--r-lg);font-size:13px;margin-bottom:6px;border:0.5px solid var(--border);transition:background .15s}
+  .expense-item:hover{background:var(--bg3)}
+  .exp-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .exp-info{flex:1;min-width:0}
+  .exp-name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+  .exp-meta{color:var(--text2);font-size:11px;margin-top:1px}
+  .exp-amount{font-weight:600;flex-shrink:0;font-family:'DM Serif Display',serif;font-style:italic;font-size:15px}
+  .badge-pill{font-size:10px;padding:3px 8px;border-radius:10px;flex-shrink:0;font-weight:500;letter-spacing:.2px}
+  .type-personal{background:var(--rose-bg);color:var(--rose-txt)}
+  .type-negocio{background:var(--sage-bg);color:var(--sage-txt)}
+  .curr-ars{background:var(--ars-bg);color:var(--ars-txt)}
+  .curr-usd{background:var(--usd-bg);color:var(--usd-txt)}
+  .filter-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+  .filter-btn{padding:6px 14px;font-size:12px;cursor:pointer;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text2);transition:all .15s;font-weight:500;font-family:'DM Sans',sans-serif}
+  .filter-btn.active{background:var(--rose);color:#fff;border-color:transparent}
+  .filter-btn:hover:not(.active){background:var(--bg2);color:var(--text)}
+  .bar-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px}
+  .bar-label{width:100px;color:var(--text2);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bar-track{flex:1;background:var(--bg2);border-radius:6px;height:8px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:6px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+  .bar-val{width:76px;flex-shrink:0;text-align:right;font-weight:500;color:var(--text);font-size:12px}
+  .empty{text-align:center;color:var(--text3);font-size:13px;padding:2.5rem 0;font-style:italic}
+  .split-row{display:flex;gap:10px;margin-bottom:1rem}
+  .split-card{flex:1;border-radius:var(--r-lg);padding:14px;text-align:center;border:0.5px solid var(--border)}
+  .split-card.personal{background:var(--rose-bg)}
+  .split-card.negocio{background:var(--sage-bg)}
+  .split-amount{font-size:20px;font-weight:600;font-family:'DM Serif Display',serif;font-style:italic}
+  .split-label{font-size:11px;margin-top:3px;font-weight:500;letter-spacing:.2px}
+  .section-title{font-size:13px;font-weight:600;margin-bottom:12px;color:var(--text);text-transform:uppercase;letter-spacing:.7px}
+  .total-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:0.5px solid var(--border);margin-top:8px;font-size:13px;color:var(--text2)}
+  /* Moneda summary banner */
+  .moneda-banner{display:flex;gap:10px;margin-bottom:1rem}
+  .moneda-card{flex:1;border-radius:var(--r-lg);padding:12px 14px;border:0.5px solid var(--border);text-align:center}
+  .moneda-card.ars{background:var(--ars-bg)}
+  .moneda-card.usd{background:var(--usd-bg)}
+  .moneda-card-flag{font-size:18px;margin-bottom:4px}
+  .moneda-card-val{font-size:17px;font-weight:600;font-family:'DM Serif Display',serif;font-style:italic}
+  .moneda-card-label{font-size:10px;font-weight:500;letter-spacing:.4px;text-transform:uppercase;margin-top:2px}
+  /* AI */
+  .ai-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .ai-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--rose-bg),var(--mauve-bg));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;border:1px solid var(--border)}
+  .ai-name{font-weight:600;font-size:15px}
+  .ai-sub{font-size:11px;color:var(--text2);margin-top:1px}
+  .ai-insight{background:var(--bg2);border-radius:var(--r-lg);padding:13px 15px;margin-bottom:8px;line-height:1.65;border:0.5px solid var(--border)}
+  .ai-insight-title{font-weight:600;font-size:13px;margin-bottom:5px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .ai-insight-body{color:var(--text2);font-size:13px}
+  .badge{font-size:10px;padding:3px 9px;border-radius:10px;font-weight:600;letter-spacing:.2px}
+  .badge-alerta{background:var(--peach-bg);color:var(--peach-txt)}
+  .badge-consejo{background:var(--mauve-bg);color:var(--mauve-txt)}
+  .badge-positivo{background:var(--sage-bg);color:var(--sage-txt)}
+  .badge-info{background:var(--gold-bg);color:var(--gold-txt)}
+  .ai-loading{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2);padding:1rem 0;font-style:italic}
+  .dot-anim{display:inline-flex;gap:5px}
+  .dot-anim span{width:6px;height:6px;border-radius:50%;background:var(--rose);animation:bounce .9s infinite}
+  .dot-anim span:nth-child(2){animation-delay:.2s}
+  .dot-anim span:nth-child(3){animation-delay:.4s}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+  .ai-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .ai-actions .btn-outline{width:auto;padding:8px 14px;font-size:12px;font-weight:600;margin-top:0}
+  .ai-ts{font-size:11px;color:var(--text3);margin-top:10px;font-style:italic}
+  .period-selector{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+  .key-section{margin-top:14px;padding-top:14px;border-top:0.5px solid var(--border)}
+  .key-row{display:flex;gap:8px;margin-top:6px}
+  .key-row input{flex:1}
+  .key-row .btn{width:auto;padding:10px 16px;font-size:13px;margin-top:0}
+  .key-note{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.5}
+  .key-note a{color:var(--rose)}
+</style>
+</head>
+<body>
+<div class="app-wrap">
+  <div class="app-header">
+    <h1>mis gastos ✦</h1>
+    <p>Tu resumen financiero personal</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('dashboard')">✦ Dashboard</button>
+    <button class="tab" onclick="showTab('agregar')">+ Agregar</button>
+    <button class="tab" onclick="showTab('gastos')">Lista</button>
+    <button class="tab" onclick="showTab('ia')">✧ Asesor IA</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="tab-dashboard" class="section active">
+    <div class="period-selector">
+      <button class="filter-btn active" onclick="setPeriod('hoy',this)">Hoy</button>
+      <button class="filter-btn" onclick="setPeriod('semana',this)">Esta semana</button>
+      <button class="filter-btn" onclick="setPeriod('mes',this)">Este mes</button>
+    </div>
+    <div id="moneda-banner"></div>
+    <div class="metric-grid" id="metrics"></div>
+    <div class="split-row" id="split-row"></div>
+    <div class="card">
+      <div class="section-title">Por categoría</div>
+      <div id="cat-bars"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">Últimos gastos</div>
+      <div id="recent-list"></div>
+    </div>
+  </div>
+
+  <!-- AGREGAR -->
+  <div id="tab-agregar" class="section">
+    <div class="card">
+      <div class="section-title">Nuevo gasto</div>
+      <div class="form-row">
+        <div><label>Descripción</label><input id="inp-desc" type="text" placeholder="Ej: Almuerzo con cliente"></div>
+        <div><label>Monto</label><input id="inp-monto" type="number" placeholder="0" min="0" step="any"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Moneda</label>
+          <select id="inp-moneda">
+            <option value="ARS">🇦🇷 Pesos (ARS)</option>
+            <option value="USD">💵 Dólares (USD)</option>
+          </select>
+        </div>
+        <div><label>Categoría</label>
+          <select id="inp-cat">
+            <option value="Comida">🍽 Comida</option>
+            <option value="Transporte">🚌 Transporte</option>
+            <option value="Marketing">📣 Marketing</option>
+            <option value="Servicios">💡 Servicios</option>
+            <option value="Salud">💊 Salud</option>
+            <option value="Entretenimiento">🎬 Entretenimiento</option>
+            <option value="Tecnología">💻 Tecnología</option>
+            <option value="Ropa">👕 Ropa</option>
+            <option value="Otro">📦 Otro</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div><label>Tipo</label>
+          <select id="inp-tipo">
+            <option value="personal">Personal</option>
+            <option value="negocio">Negocio</option>
+          </select>
+        </div>
+        <div><label>Fecha</label><input id="inp-fecha" type="date"></div>
+      </div>
+      <div style="margin-bottom:10px"><label>Notas (opcional)</label><input id="inp-nota" type="text" placeholder="Opcional"></div>
+      <button class="btn" onclick="agregarGasto()">Agregar gasto</button>
+    </div>
+  </div>
+
+  <!-- GASTOS -->
+  <div id="tab-gastos" class="section">
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setFiltro('todos',this)">Todos</button>
+      <button class="filter-btn" onclick="setFiltro('personal',this)">Personal</button>
+      <button class="filter-btn" onclick="setFiltro('negocio',this)">Negocio</button>
+      <button class="filter-btn" onclick="setFiltro('ARS',this)">🇦🇷 Pesos</button>
+      <button class="filter-btn" onclick="setFiltro('USD',this)">💵 Dólares</button>
+    </div>
+    <div id="gastos-list"></div>
+  </div>
+
+  <!-- IA -->
+  <div id="tab-ia" class="section">
+    <div class="card">
+      <div class="ai-header">
+        <div class="ai-avatar">✦</div>
+        <div>
+          <div class="ai-name">Asesor financiero</div>
+          <div class="ai-sub">Análisis personalizado basado en tus gastos reales</div>
+        </div>
+      </div>
+      <div id="ai-content"><div class="empty">Cargá al menos 3 gastos para recibir consejos personalizados.</div></div>
+      <div class="ai-actions">
+        <button class="btn btn-outline" onclick="analizarGastos('completo')">↺ Actualizar</button>
+        <button class="btn btn-outline" onclick="analizarGastos('ahorro')">💡 Ahorro</button>
+        <button class="btn btn-outline" onclick="analizarGastos('negocio')">🏢 Negocio</button>
+        <button class="btn btn-outline" onclick="analizarGastos('monedas')">💱 Monedas</button>
+      </div>
+      <div class="key-section">
+        <label>API Key de Anthropic</label>
+        <div class="key-row">
+          <input id="api-key-input" type="password" placeholder="sk-ant-...">
+          <button class="btn" onclick="saveKey()">Guardar</button>
+        </div>
+        <p class="key-note">Tu clave se guarda solo en este dispositivo. <a href="https://console.anthropic.com/settings/keys" target="_blank">Obtener clave →</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const COLORS={Comida:'#c4637a',Transporte:'#6a8f7c',Marketing:'#9b6fa0',Servicios:'#d4845a',Salud:'#c49a3c',Entretenimiento:'#7c6fa0',Tecnología:'#5a8f8a',Ropa:'#c06080',Otro:'#a08880'};
+let gastos=[],currentPeriod='hoy',currentFiltro='todos';
+
+function loadData(){
+  try{const r=localStorage.getItem('gastos_v2');if(r)gastos=JSON.parse(r);}catch(e){gastos=[];}
+  // Migrate old gastos without moneda field → default ARS
+  gastos=gastos.map(g=>({...g,moneda:g.moneda||'ARS'}));
+  try{const k=localStorage.getItem('anthropic_key');if(k)document.getElementById('api-key-input').value=k;}catch(e){}
+  renderAll();
+}
+function saveData(){try{localStorage.setItem('gastos_v2',JSON.stringify(gastos));}catch(e){}}
+function saveKey(){
+  const k=document.getElementById('api-key-input').value.trim();
+  if(!k){alert('Ingresá tu API key');return;}
+  localStorage.setItem('anthropic_key',k);
+  alert('✓ Clave guardada');
+}
+function getKey(){return localStorage.getItem('anthropic_key')||'';}
+function today(){return new Date().toISOString().split('T')[0];}
+function setDefaultDate(){const d=document.getElementById('inp-fecha');if(d&&!d.value)d.value=today();}
+
+// Format amounts respecting currency
+function fmt(n,moneda){
+  const m=moneda||'ARS';
+  if(m==='USD') return 'U$S '+parseFloat(n).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return '$'+Math.round(n).toLocaleString('es-AR');
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function agregarGasto(){
+  const desc=document.getElementById('inp-desc').value.trim();
+  const monto=parseFloat(document.getElementById('inp-monto').value);
+  const moneda=document.getElementById('inp-moneda').value;
+  const cat=document.getElementById('inp-cat').value;
+  const tipo=document.getElementById('inp-tipo').value;
+  const fecha=document.getElementById('inp-fecha').value;
+  const nota=document.getElementById('inp-nota').value.trim();
+  if(!desc||!monto||monto<=0||!fecha){alert('Completá descripción, monto y fecha.');return;}
+  gastos.unshift({id:Date.now(),desc,monto,moneda,cat,tipo,fecha,nota});
+  saveData();
+  document.getElementById('inp-desc').value='';
+  document.getElementById('inp-monto').value='';
+  document.getElementById('inp-nota').value='';
+  renderAll();showTab('dashboard');
+}
+
+function eliminarGasto(id){
+  if(!confirm('¿Eliminar este gasto?'))return;
+  gastos=gastos.filter(g=>g.id!==id);saveData();renderAll();
+}
+
+function showTab(t){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  ['dashboard','agregar','gastos','ia'].forEach((n,i)=>{if(n===t)document.querySelectorAll('.tab')[i].classList.add('active');});
+  if(t==='agregar')setDefaultDate();
+  if(t==='ia'&&gastos.length>=3)analizarGastos('completo');
+}
+
+function setPeriod(p,btn){
+  currentPeriod=p;
+  document.querySelectorAll('.period-selector .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderDashboard();
+}
+
+function setFiltro(f,btn){
+  currentFiltro=f;
+  document.querySelectorAll('#tab-gastos .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderGastos();
+}
+
+function filterByPeriod(arr,period){
+  const t=today(),now=new Date();
+  if(period==='hoy')return arr.filter(g=>g.fecha===t);
+  if(period==='semana'){
+    const dow=now.getDay()||7,mon=new Date(now);
+    mon.setDate(now.getDate()-dow+1);mon.setHours(0,0,0,0);
+    return arr.filter(g=>new Date(g.fecha+'T00:00:00')>=mon);
+  }
+  if(period==='mes')return arr.filter(g=>g.fecha.startsWith(t.slice(0,7)));
+  return arr;
+}
+
+function renderDashboard(){
+  const f=filterByPeriod(gastos,currentPeriod);
+  const fARS=f.filter(g=>g.moneda==='ARS');
+  const fUSD=f.filter(g=>g.moneda==='USD');
+  const totalARS=fARS.reduce((a,g)=>a+g.monto,0);
+  const totalUSD=fUSD.reduce((a,g)=>a+g.monto,0);
+  const personalARS=fARS.filter(g=>g.tipo==='personal').reduce((a,g)=>a+g.monto,0);
+  const negocioARS=fARS.filter(g=>g.tipo==='negocio').reduce((a,g)=>a+g.monto,0);
+  const personalUSD=fUSD.filter(g=>g.tipo==='personal').reduce((a,g)=>a+g.monto,0);
+  const negocioUSD=fUSD.filter(g=>g.tipo==='negocio').reduce((a,g)=>a+g.monto,0);
+  const cantHoy=filterByPeriod(gastos,'hoy').length;
+  const label=currentPeriod==='hoy'?'hoy':currentPeriod==='semana'?'semana':'mes';
+  const hasUSD=fUSD.length>0;
+
+  // Moneda banner
+  document.getElementById('moneda-banner').innerHTML=`
+    <div class="moneda-banner">
+      <div class="moneda-card ars">
+        <div class="moneda-card-flag">🇦🇷</div>
+        <div class="moneda-card-val" style="color:var(--ars-txt)">${fmt(totalARS,'ARS')}</div>
+        <div class="moneda-card-label" style="color:var(--ars-txt)">Pesos · ${fARS.length} gastos</div>
+      </div>
+      <div class="moneda-card usd">
+        <div class="moneda-card-flag">💵</div>
+        <div class="moneda-card-val" style="color:var(--usd-txt)">${fmt(totalUSD,'USD')}</div>
+        <div class="moneda-card-label" style="color:var(--usd-txt)">Dólares · ${fUSD.length} gastos</div>
+      </div>
+    </div>`;
+
+  // Metrics
+  document.getElementById('metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Personal ARS</div><div class="metric-value" style="color:var(--rose)">${fmt(personalARS,'ARS')}</div></div>
+    <div class="metric"><div class="metric-label">Negocio ARS</div><div class="metric-value" style="color:var(--sage)">${fmt(negocioARS,'ARS')}</div></div>
+    ${hasUSD?`<div class="metric"><div class="metric-label">Personal USD</div><div class="metric-value" style="color:var(--rose)">${fmt(personalUSD,'USD')}</div></div>`:''}
+    ${hasUSD?`<div class="metric"><div class="metric-label">Negocio USD</div><div class="metric-value" style="color:var(--sage)">${fmt(negocioUSD,'USD')}</div></div>`:''}
+    <div class="metric"><div class="metric-label">Gastos hoy</div><div class="metric-value">${cantHoy}</div></div>`;
+
+  // Split personal/negocio (ARS only for %)
+  const pct=totalARS>0?Math.round(personalARS/totalARS*100):0;
+  document.getElementById('split-row').innerHTML=`
+    <div class="split-card personal">
+      <div class="split-amount" style="color:var(--rose-txt)">${fmt(personalARS,'ARS')}</div>
+      <div class="split-label" style="color:var(--rose-txt)">Personal · ${pct}%</div>
+    </div>
+    <div class="split-card negocio">
+      <div class="split-amount" style="color:var(--sage-txt)">${fmt(negocioARS,'ARS')}</div>
+      <div class="split-label" style="color:var(--sage-txt)">Negocio · ${100-pct}%</div>
+    </div>`;
+
+  // Category bars (separate ARS / USD)
+  const catsARS={},catsUSD={};
+  f.forEach(g=>{
+    if(g.moneda==='USD') catsUSD[g.cat]=(catsUSD[g.cat]||0)+g.monto;
+    else catsARS[g.cat]=(catsARS[g.cat]||0)+g.monto;
+  });
+  function makeBars(cats,moneda){
+    const sorted=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+    const maxVal=sorted[0]?sorted[0][1]:1;
+    return sorted.map(([cat,val])=>`
+      <div class="bar-row">
+        <div class="bar-label">${cat}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.round(val/maxVal*100)}%;background:${COLORS[cat]||'#a08880'}"></div></div>
+        <div class="bar-val">${fmt(val,moneda)}</div>
+      </div>`).join('');
+  }
+  const barsARS=makeBars(catsARS,'ARS');
+  const barsUSD=makeBars(catsUSD,'USD');
+  let barsHTML='';
+  if(barsARS) barsHTML+=`<div style="font-size:11px;color:var(--ars-txt);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">🇦🇷 Pesos</div>${barsARS}`;
+  if(barsUSD) barsHTML+=`<div style="font-size:11px;color:var(--usd-txt);font-weight:600;margin:12px 0 8px;text-transform:uppercase;letter-spacing:.5px">💵 Dólares</div>${barsUSD}`;
+  document.getElementById('cat-bars').innerHTML=barsHTML||'<div class="empty">Sin datos para el período</div>';
+
+  document.getElementById('recent-list').innerHTML=f.length?f.slice(0,5).map(g=>expItem(g)).join(''):'<div class="empty">Sin gastos en este período</div>';
+}
+
+function expItem(g){
+  const mon=g.moneda||'ARS';
+  return `<div class="expense-item">
+    <div class="exp-dot" style="background:${COLORS[g.cat]||'#a08880'}"></div>
+    <div class="exp-info">
+      <div class="exp-name">${esc(g.desc)}</div>
+      <div class="exp-meta">${g.cat} · ${g.fecha}${g.nota?' · '+esc(g.nota):''}</div>
+    </div>
+    <div class="exp-amount">${fmt(g.monto,mon)}</div>
+    <span class="badge-pill ${mon==='USD'?'curr-usd':'curr-ars'}">${mon}</span>
+    <span class="badge-pill ${g.tipo==='personal'?'type-personal':'type-negocio'}">${g.tipo}</span>
+    <button class="btn-sm btn-danger" onclick="eliminarGasto(${g.id})" title="Eliminar">✕</button>
+  </div>`;
+}
+
+function renderGastos(){
+  let arr=gastos;
+  if(currentFiltro==='personal'||currentFiltro==='negocio') arr=gastos.filter(g=>g.tipo===currentFiltro);
+  else if(currentFiltro==='ARS'||currentFiltro==='USD') arr=gastos.filter(g=>g.moneda===currentFiltro);
+  if(!arr.length){document.getElementById('gastos-list').innerHTML='<div class="empty">Aún no hay gastos registrados</div>';return;}
+  const totalARS=arr.filter(g=>g.moneda==='ARS').reduce((a,g)=>a+g.monto,0);
+  const totalUSD=arr.filter(g=>g.moneda==='USD').reduce((a,g)=>a+g.monto,0);
+  let totalStr='';
+  if(totalARS>0&&totalUSD>0) totalStr=`${fmt(totalARS,'ARS')} + ${fmt(totalUSD,'USD')}`;
+  else if(totalUSD>0) totalStr=fmt(totalUSD,'USD');
+  else totalStr=fmt(totalARS,'ARS');
+  document.getElementById('gastos-list').innerHTML=arr.map(g=>expItem(g)).join('')+
+    `<div class="total-row"><span>Total · ${arr.length} gastos</span><span style="font-weight:600;color:var(--text);font-family:'DM Serif Display',serif;font-style:italic;font-size:15px">${totalStr}</span></div>`;
+}
+
+function buildResumen(){
+  const totalARS=gastos.filter(g=>g.moneda==='ARS').reduce((a,g)=>a+g.monto,0);
+  const totalUSD=gastos.filter(g=>g.moneda==='USD').reduce((a,g)=>a+g.monto,0);
+  const personalARS=gastos.filter(g=>g.moneda==='ARS'&&g.tipo==='personal').reduce((a,g)=>a+g.monto,0);
+  const negocioARS=gastos.filter(g=>g.moneda==='ARS'&&g.tipo==='negocio').reduce((a,g)=>a+g.monto,0);
+  const personalUSD=gastos.filter(g=>g.moneda==='USD'&&g.tipo==='personal').reduce((a,g)=>a+g.monto,0);
+  const negocioUSD=gastos.filter(g=>g.moneda==='USD'&&g.tipo==='negocio').reduce((a,g)=>a+g.monto,0);
+  const cats={};gastos.forEach(g=>{cats[g.cat]=(cats[g.cat]||0)+g.monto;});
+  const sortedCats=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+  const mesActual=today().slice(0,7);
+  const totalMesARS=gastos.filter(g=>g.fecha.startsWith(mesActual)&&g.moneda==='ARS').reduce((a,g)=>a+g.monto,0);
+  const totalMesUSD=gastos.filter(g=>g.fecha.startsWith(mesActual)&&g.moneda==='USD').reduce((a,g)=>a+g.monto,0);
+  const dias=[...new Set(gastos.map(g=>g.fecha))].length||1;
+  return{
+    totalARS:Math.round(totalARS),totalUSD:totalUSD.toFixed(2),
+    personalARS:Math.round(personalARS),negocioARS:Math.round(negocioARS),
+    personalUSD:personalUSD.toFixed(2),negocioUSD:negocioUSD.toFixed(2),
+    pctPersonalARS:totalARS>0?Math.round(personalARS/totalARS*100):0,
+    categorias:sortedCats.map(([k,v])=>({cat:k,monto:Math.round(v),pct:Math.round(v/(totalARS||1)*100)})),
+    totalMesARS:Math.round(totalMesARS),totalMesUSD:totalMesUSD.toFixed(2),
+    cantGastos:gastos.length,cantUSD:gastos.filter(g=>g.moneda==='USD').length,
+    promDiarioARS:Math.round(totalARS/dias),
+    topGasto:gastos[0]?{desc:gastos[0].desc,monto:gastos[0].monto,cat:gastos[0].cat,tipo:gastos[0].tipo,moneda:gastos[0].moneda||'ARS'}:null
+  };
+}
+
+async function analizarGastos(modo='completo'){
+  if(gastos.length<3){document.getElementById('ai-content').innerHTML='<div class="empty">Cargá al menos 3 gastos para recibir consejos.</div>';return;}
+  const key=getKey();
+  if(!key){document.getElementById('ai-content').innerHTML='<div class="empty" style="color:var(--rose)">⚠️ Ingresá tu API Key para usar el asesor.</div>';return;}
+  document.getElementById('ai-content').innerHTML=`<div class="ai-loading"><div class="dot-anim"><span></span><span></span><span></span></div> Analizando...</div>`;
+  const r=buildResumen();
+  let extra='';
+  if(modo==='ahorro')extra='Enfocate en consejos de ahorro concretos y accionables.';
+  else if(modo==='negocio')extra='Enfocate en gastos de negocio: qué deducir, qué optimizar, qué separar mejor.';
+  else if(modo==='monedas')extra='Enfocate en el análisis de gastos en pesos vs dólares: diversificación, riesgo cambiario, y recomendaciones para Argentina.';
+  const prompt=`Sos un asesor financiero personal amigable que habla en español rioplatense (Argentina). Analizá estos datos reales y dá exactamente 4 insights personalizados y accionables. ${extra}
+
+DATOS:
+- Gastos en Pesos (ARS): $${r.totalARS} total, $${r.personalARS} personal (${r.pctPersonalARS}%), $${r.negocioARS} negocio
+- Gastos en Dólares (USD): U$S${r.totalUSD} total, U$S${r.personalUSD} personal, U$S${r.negocioUSD} negocio
+- Este mes: ARS $${r.totalMesARS} / USD U$S${r.totalMesUSD}
+- Total gastos: ${r.cantGastos} (${r.cantUSD} en dólares)
+- Promedio diario ARS: $${r.promDiarioARS}
+- Categorías: ${r.categorias.slice(0,6).map(c=>`${c.cat} $${c.monto}`).join(', ')}
+- Último gasto: ${r.topGasto?`"${r.topGasto.desc}" ${r.topGasto.moneda==='USD'?'U$S':'$'}${r.topGasto.monto} (${r.topGasto.tipo})`:'N/A'}
+
+Respondé SOLO con JSON válido sin markdown:
+{"insights":[{"tipo":"alerta|consejo|positivo|info","titulo":"título corto","texto":"2-3 oraciones específicas basadas en los números reales"}]}`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    if(!resp.ok){const e=await resp.json();throw new Error(e.error?.message||resp.status);}
+    const data=await resp.json();
+    const text=data.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+    renderInsights(JSON.parse(text).insights,r);
+  }catch(e){
+    document.getElementById('ai-content').innerHTML=`<div class="ai-insight" style="color:var(--rose)">Error: ${esc(e.message)}. Verificá tu API key.</div>`;
+  }
+}
+
+function renderInsights(insights,r){
+  const em={alerta:'⚠️',consejo:'💡',positivo:'✨',info:'📊'};
+  const bl={alerta:'Atención',consejo:'Consejo',positivo:'Muy bien',info:'Dato'};
+  const bc={alerta:'badge-alerta',consejo:'badge-consejo',positivo:'badge-positivo',info:'badge-info'};
+  const html=insights.map(ins=>`
+    <div class="ai-insight">
+      <div class="ai-insight-title"><span>${em[ins.tipo]||'💡'}</span><span>${esc(ins.titulo)}</span><span class="badge ${bc[ins.tipo]||'badge-consejo'}">${bl[ins.tipo]||'Consejo'}</span></div>
+      <div class="ai-insight-body">${esc(ins.texto)}</div>
+    </div>`).join('');
+  const ts=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('ai-content').innerHTML=html+`<div class="ai-ts">Actualizado a las ${ts} · ${r.cantGastos} gastos analizados</div>`;
+}
+
+function renderAll(){renderDashboard();renderGastos();}
+loadData();setDefaultDate();
+</script>
+</body>
+</html>
