@@ -1,0 +1,17 @@
+{
+  "name": "Finanzas Dani",
+  "short_name": "Finanzas Dani",
+  "description": "Tu resumen financiero personal",
+  "start_url": "./gastos.html",
+  "display": "standalone",
+  "background_color": "#fff8fb",
+  "theme_color": "#fff8fb",
+  "icons": [
+    {
+      "src": "gastos-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
